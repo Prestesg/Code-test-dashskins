@@ -9,6 +9,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { JwtModule } from '@nestjs/jwt';
 import { join } from 'path/posix';
 import { User, UserSchema } from './model/user.schema';
+console.log({teste:process.env.DATABASE_CONNECTION})
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -19,7 +20,7 @@ import { User, UserSchema } from './model/user.schema';
       signOptions: { expiresIn: '2h' },
     }),
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'public'),
+      rootPath: join(__dirname, '../..','client', 'dist'),
     }),
   ],
   controllers: [

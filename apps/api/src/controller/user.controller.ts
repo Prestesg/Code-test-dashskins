@@ -3,7 +3,7 @@ import { User } from "../model/user.schema";
 import { UserService } from "../service/user.service";
 import { JwtService } from '@nestjs/jwt'
 
-@Controller('/api/v1/users')
+@Controller('/users')
 export class UserController {
     constructor(
         private readonly userServerice: UserService,
