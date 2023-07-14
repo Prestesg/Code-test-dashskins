@@ -10,14 +10,19 @@ import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 import EditionModal  from './EditionModal';
+import { useContext } from 'react';
+import UserContext from '../contexts/UserContext';
 
-const UsersTable = ({users}) => {
-    const deleteUser = (user) => {
+const UsersTable = () => {
+    
+    const { users, getUsers } = useContext(UserContext);
+        
+    const deleteUser = (user:any) => {
         fetch("/api/users",{
             method:"DELETE",
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(user)}
-    ).then((res)=>{console.log({res})})
+    ).then((res)=>getUsers())
     }
 
 
@@ -35,7 +40,7 @@ const UsersTable = ({users}) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {users.map((user,index) => (
+            {users.map((user:any,index:number) => (
               <TableRow key={user.name} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                 <TableCell component="th" scope="row">{user.name}</TableCell>
                 <TableCell >{user.age}</TableCell>

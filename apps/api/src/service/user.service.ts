@@ -35,22 +35,21 @@ export class UserService {
         const hash = await bcrypt.hash(user.password, salt);
         const reqBody = {
             name: user.name,
-            age: user.age,
+            age: user?.age,
             avatar: user?.avatar,
             steamId: user?.steamId,
-            email: user.email,
+            email: user?.email,
             password: hash
         }
         const newUser = new this.userModel(reqBody);
         return newUser.save();
-    }
-    
+    }   
     async signin(user: User, jwt: JwtService): Promise<any> {
-        const foundUser = await this.userModel.findOne({ email: user.email }).exec();
+        const foundUser = await this.userModel.findOne({ name: user.name }).exec();
         if (foundUser) {
             const { password } = foundUser;
             if (bcrypt.compare(user.password, password)) {
-                const payload = { email: user.email };
+                const payload = { name: user.name };
                 return {
                     token: jwt.sign(payload),
                 };

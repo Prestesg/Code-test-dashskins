@@ -1,35 +1,36 @@
-import { useState,useEffect } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import UsersTable from './components/UsersTable';
-import EditionModal  from './components/EditionModal';
+import './App.css';
+import { UserContextProvider }  from './contexts/UserContext';
+import { AuthContextProvider } from './contexts/AuthContext';
+
+import {
+  createBrowserRouter,
+  RouterProvider,
+} from "react-router-dom";
+
+import UsersPage from './pages/UsersPage';
+import AuthPage from './pages/AuthPage';
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <AuthPage />,
+  },
+  {
+    path: "/users",
+    element: <UsersPage />,
+  },
+]);
 
 function App() {
-  const [users, setUsers] = useState([])
-
-  useEffect(() => {
-    fetch("/api/users")
-    .then((res)=> res.json())
-    .then((body)=> {
-      setUsers(body.users)
-    })
-  }, [])
-
-  const insertUser = (user) => {
-    fetch("/api/users",{
-      method:"POST",
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(user)}
-    ).then((res)=>{console.log({res})})
-  }
-
   return (
     <>
-      <EditionModal user={{}} method={"insert"}/>
-      <UsersTable users={users}/>
+    <AuthContextProvider>
+      <UserContextProvider >
+        <RouterProvider router={router} />
+      </UserContextProvider>
+    </AuthContextProvider>
     </>
   )
 }
 
-export default App
+export default App;
