@@ -1,9 +1,10 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import TextField from '@mui/material/TextField';
+import { useContext } from 'react';
+import UserContext from '../contexts/UserContext';
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -20,8 +21,10 @@ const style = {
 const EditionModal = ({user,method}) => {
   const [open, setOpen] = React.useState(false);
   const [userEdit, setUserEdit] = React.useState(user);
+  const [formErrors, setFormErrors] = React.useState(user);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const { getUsers } = useContext(UserContext);
   
   const onUserChange = (field:string,value:string|number) => {
     setUserEdit((state:any)=>{
@@ -30,20 +33,48 @@ const EditionModal = ({user,method}) => {
     });
   }
 
+  const valideForm = () => {
+    const errors:any = {};
+    const mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    Object.keys(userEdit).forEach(key => {
+        switch (key) {
+            case "name":
+                errors[key] = userEdit[key].length > 0?true:false;
+                break;
+            case "email":
+                errors[key] = userEdit[key].match(mailformat)?true:false;
+                break;
+            case "age":
+                errors[key] = userEdit[key] <= 120 && userEdit[key] >= 18 ?true:false;
+                break;
+            default:
+                break;
+        }
+    });
+    setFormErrors(errors);
+    console.log({teste:Object.values(errors).includes(false)},errors)
+    return Object.values(errors).includes(false)
+  }
+
   const saveChanges = () => {
+    if(!valideForm()){
     fetch("/api/users",{
         method:"PUT",
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(userEdit)}
-).then((res)=>{console.log({res})})
+    ).then((res)=>getUsers())
+    }
   }
 
   const insertUser = () => {
-    fetch("/api/users",{
-        method:"POST",
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(userEdit)}
-    ).then((res)=>{console.log({res})})
+    if(!valideForm()){
+        fetch("/api/users",{
+            method:"POST",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(userEdit)}
+        ).then((res)=>getUsers())
+
+    }
   }
   
   return (
@@ -52,33 +83,37 @@ const EditionModal = ({user,method}) => {
       <Modal
         open={open}
         onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
       >
         <Box sx={style}
         component="form"
         >
         <TextField
           required
-          id="outlined-required"
           label="Nome"
           value={userEdit.name}
           onChange={(e)=>onUserChange('name',e.target.value)}
+          error={!formErrors.name}
+          helperText={!formErrors.name?"Você precisa inserir um nome":""}
+          margin="normal"
         />
         <TextField
           required
-          id="outlined-required"
           label="Idade"
           type="number"
           value={userEdit.age}
           onChange={(e)=>onUserChange('age',e.target.value)}
+          error={!formErrors.age}
+          helperText={!formErrors.age?"Você precisa inserir uma idade válida":""}
+          margin="normal"
         />
         <TextField
           required
-          id="outlined-required"
           label="Email"
           value={userEdit.email}
           onChange={(e)=>onUserChange('email',e.target.value)}
+          error={!formErrors.email}
+          helperText={!formErrors.email?"Você precisa inserir um email válido":""}
+          margin="normal"
         />
         <Button onClick={method === "insert"?insertUser:saveChanges}>{method === "insert"?"INSERIR":"SALVAR"}</Button>
         </Box>
