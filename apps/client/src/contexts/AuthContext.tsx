@@ -1,4 +1,4 @@
-import { createContext, useState } from 'react'
+import { createContext, useState} from 'react'
 
 export const AuthContext = createContext({});
 
@@ -10,7 +10,10 @@ export const AuthContextProvider = ({ children }) => {
             method:"POST",
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(loginForm)}
-        ).then((res)=>setAuth(true))
+        ).then((res)=>res.json())
+        .then(body =>{
+            setAuth(body.token);
+        })
     }
  
     const singnup = (loginForm) => {
@@ -26,6 +29,6 @@ export const AuthContextProvider = ({ children }) => {
             {children}
         </AuthContext.Provider>
     );
-};
+}; 
 
 export default AuthContext;

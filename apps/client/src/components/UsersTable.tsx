@@ -15,17 +15,8 @@ import UserContext from '../contexts/UserContext';
 
 const UsersTable = () => {
     
-    const { users, getUsers } = useContext(UserContext);
+    const { users, deleteUser } = useContext(UserContext);
         
-    const deleteUser = (user:any) => {
-        fetch("/api/users",{
-            method:"DELETE",
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(user)}
-    ).then((res)=>getUsers())
-    }
-
-
     return (
       <>
       <TableContainer component={Paper}>
@@ -40,7 +31,7 @@ const UsersTable = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {users.map((user:any,index:number) => (
+            {users?.map((user:any,index:number) => (
               <TableRow key={user.name} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                 <TableCell component="th" scope="row">{user.name}</TableCell>
                 <TableCell >{user.age}</TableCell>

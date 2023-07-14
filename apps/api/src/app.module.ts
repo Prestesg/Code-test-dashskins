@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, RequestMethod, MiddlewareConsumer } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { UserController } from './controller/user.controller'
 import { AppService } from './app.service';
@@ -9,7 +9,8 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { JwtModule } from '@nestjs/jwt';
 import { join } from 'path/posix';
 import { User, UserSchema } from './model/user.schema';
-console.log({teste:process.env.DATABASE_CONNECTION})
+import { isAuthenticated } from './app.middleware';
+
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -28,4 +29,15 @@ console.log({teste:process.env.DATABASE_CONNECTION})
     AppController],
   providers: [UserService,AppService],
 })
-export class AppModule {}
+
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(isAuthenticated)
+      .exclude(
+        { path: '/users/signin', method: RequestMethod.POST },
+        { path: '/users/signup', method: RequestMethod.POST },
+      )
+      .forRoutes(UserController);
+  }
+}

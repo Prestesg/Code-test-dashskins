@@ -5,6 +5,7 @@ import Modal from '@mui/material/Modal';
 import TextField from '@mui/material/TextField';
 import { useContext } from 'react';
 import UserContext from '../contexts/UserContext';
+import AuthContext from '../contexts/AuthContext';
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -25,6 +26,7 @@ const EditionModal = ({user,method}) => {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const { getUsers } = useContext(UserContext);
+  const { auth } = useContext(AuthContext);
   
   const onUserChange = (field:string,value:string|number) => {
     setUserEdit((state:any)=>{
@@ -60,7 +62,8 @@ const EditionModal = ({user,method}) => {
     if(!valideForm()){
     fetch("/api/users",{
         method:"PUT",
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json',
+        'authorization': `Bearer ${auth}`  },
         body: JSON.stringify(userEdit)}
     ).then((res)=>getUsers())
     }
@@ -70,7 +73,8 @@ const EditionModal = ({user,method}) => {
     if(!valideForm()){
         fetch("/api/users",{
             method:"POST",
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json',
+            'authorization': `Bearer ${auth}`  },
             body: JSON.stringify(userEdit)}
         ).then((res)=>getUsers())
 
