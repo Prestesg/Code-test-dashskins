@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpStatus, Param, Post, UploadedFiles, Put, Req, Res } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpStatus, HttpException, Post, UploadedFiles, Put, Req, Res } from "@nestjs/common";
 import { User } from "../model/user.schema";
 import { UserService } from "../service/user.service";
 import { JwtService } from '@nestjs/jwt'
@@ -34,9 +34,11 @@ export class UserController {
     @Put()
     async updateUser(@Res() response, @Body() user: User) {
         const updatedUser = await this.userServerice.updateUser(user);
-        return response.status(HttpStatus.OK).json({
-            updatedUser
-        })
+        if(updatedUser.acknowledged){
+            return response.status(HttpStatus.OK)           
+        }else {
+            return new HttpException('Usuário não encontrado', HttpStatus.BAD_REQUEST)
+        }
     }
     @Post('/signup')
     async Signup(@Res() response, @Body() user: User) {

@@ -1,9 +1,8 @@
-import * as React from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Modal from '@mui/material/Modal';
 import TextField from '@mui/material/TextField';
-import { useContext } from 'react';
+import { useState,useContext } from 'react';
 import UserContext from '../contexts/UserContext';
 import AuthContext from '../contexts/AuthContext';
 
@@ -20,65 +19,18 @@ const style = {
 };
 
 const EditionModal = ({user,method}) => {
-  const [open, setOpen] = React.useState(false);
-  const [userEdit, setUserEdit] = React.useState(user);
-  const [formErrors, setFormErrors] = React.useState(user);
+  const [open, setOpen] = useState(false);
+  const [userEdit, setUserEdit] = useState(user);
+  const [formErrors, setFormErrors] = useState(user);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-  const { getUsers } = useContext(UserContext);
-  const { auth } = useContext(AuthContext);
+  const { saveChanges, insertUser } = useContext(UserContext);
   
   const onUserChange = (field:string,value:string|number) => {
     setUserEdit((state:any)=>{
         state[field] = value;
         return {...state};
     });
-  }
-
-  const valideForm = () => {
-    const errors:any = {};
-    const mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-    Object.keys(userEdit).forEach(key => {
-        switch (key) {
-            case "name":
-                errors[key] = userEdit[key].length > 0?true:false;
-                break;
-            case "email":
-                errors[key] = userEdit[key].match(mailformat)?true:false;
-                break;
-            case "age":
-                errors[key] = userEdit[key] <= 120 && userEdit[key] >= 18 ?true:false;
-                break;
-            default:
-                break;
-        }
-    });
-    setFormErrors(errors);
-    console.log({teste:Object.values(errors).includes(false)},errors)
-    return Object.values(errors).includes(false)
-  }
-
-  const saveChanges = () => {
-    if(!valideForm()){
-    fetch("/api/users",{
-        method:"PUT",
-        headers: { 'Content-Type': 'application/json',
-        'authorization': `Bearer ${auth}`  },
-        body: JSON.stringify(userEdit)}
-    ).then((res)=>getUsers())
-    }
-  }
-
-  const insertUser = () => {
-    if(!valideForm()){
-        fetch("/api/users",{
-            method:"POST",
-            headers: { 'Content-Type': 'application/json',
-            'authorization': `Bearer ${auth}`  },
-            body: JSON.stringify(userEdit)}
-        ).then((res)=>getUsers())
-
-    }
   }
   
   return (
@@ -119,7 +71,7 @@ const EditionModal = ({user,method}) => {
           helperText={!formErrors.email?"Você precisa inserir um email válido":""}
           margin="normal"
         />
-        <Button onClick={method === "insert"?insertUser:saveChanges}>{method === "insert"?"INSERIR":"SALVAR"}</Button>
+        <Button onClick={method === "insert"?()=>insertUser(userEdit,setFormErrors):()=>saveChanges(userEdit,setFormErrors)}>{method === "insert"?"INSERIR":"SALVAR"}</Button>
         </Box>
       </Modal>
     </div>

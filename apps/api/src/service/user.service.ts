@@ -26,7 +26,7 @@ export class UserService {
     }
 
     async updateUser(user: User) {
-        const updatedUser = this.userModel.updateOne({_id:{$eq: user._id}},user);
+        const updatedUser = this.userModel.updateOne({_id:user._id},user);
         return updatedUser;
     }
 
