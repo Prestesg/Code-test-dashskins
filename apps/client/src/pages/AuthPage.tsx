@@ -1,10 +1,13 @@
+import * as React from 'react';
 import { useState,useEffect, useContext } from 'react';
 import '../App.css'
-import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import AuthContext from '../contexts/AuthContext';
 import Button from '@mui/material/Button';
 import { useNavigate } from "react-router-dom";
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Box from '@mui/material/Box';
 
 function AuthPage() { 
   const { auth, login,singnup } = useContext(AuthContext);
@@ -17,8 +20,8 @@ function AuthPage() {
     }
   }, [auth])
   
-  const changeLoginForm = (field,value) => {
-    setLoginForm((state)=>{
+  const changeLoginForm = (field :string,value :string) => {
+    setLoginForm((state:any)=>{
       state[field] = value;
       return {...state}
     })
@@ -26,21 +29,19 @@ function AuthPage() {
 
   return (
     <>    
-        <Box
-      component="form"
-      sx={{
-        '& .MuiTextField-root': { m: 1, width: '25ch' },
-      }}
-      noValidate
-      autoComplete="off"
-    >
-      
+
+      <Card sx={{ minWidth: 275,width:"25%",margin:"auto" }} >
+      <div style={{background:"black"}}>
+        <img id={"mainLogo"} src={"/logo.webp"}/>
+      </div>
+      <CardContent>
         <TextField
           required
           id="outlined-required"
           label="Username"
-          value={loginForm.username}
-          onChange={(e)=>changeLoginForm('name',e.target.value)}
+          value={loginForm.name}
+          onChange={(e: { target: { value: any; }; })=>changeLoginForm('name',e.target.value)}
+          margin={"normal"}
         />
         <TextField
           required
@@ -48,11 +49,15 @@ function AuthPage() {
           label="Password"
           type="password"
           value={loginForm.password}
-          onChange={(e)=>changeLoginForm('password',e.target.value)}
+          onChange={(e: { target: { value: any; }; })=>changeLoginForm('password',e.target.value)}
+          margin={"normal"}
         />
-        <Button onClick={()=>login(loginForm)}>LOGIN</Button>
-        <Button onClick={()=>singnup(loginForm)}>CADASTRO</Button>
-      </Box>
+        <Box sx={{ '& button': { m: 1 } }}>
+          <Button variant="contained" size={"medium"} color="secondary" onClick={()=>login(loginForm,false)}>LOGIN</Button>
+          <Button variant="contained" size={"medium"} color="primary" onClick={()=>singnup(loginForm)}>CADASTRO</Button>
+        </Box>
+      </CardContent>
+      </Card>
 
     </>
   )

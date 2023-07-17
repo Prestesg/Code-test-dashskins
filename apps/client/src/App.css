@@ -1,7 +1,6 @@
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+  width: 100%;
+  height: 100%;
   text-align: center;
 }
 
@@ -18,12 +17,21 @@
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
 
+#mainLogo {
+  margin:10px;
+}
+
 @keyframes logo-spin {
   from {
     transform: rotate(0deg);
   }
   to {
     transform: rotate(360deg);
+  }
+}
+@media screen and (max-width: 1200px) {
+  #mainLogo {
+    width: 200px;
   }
 }
 

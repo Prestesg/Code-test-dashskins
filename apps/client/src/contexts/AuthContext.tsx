@@ -1,7 +1,11 @@
 import { createContext, useState, useEffect, useContext} from 'react'
 import SnackbarContext from './SnackbarContext';
 
-export const AuthContext = createContext({});
+export const AuthContext = createContext({
+    auth:false,
+    login:(_loginForm:any,_first:boolean)=>true,
+    singnup:(_loginForm:any)=> true
+});
 
 export const AuthContextProvider = ({ children }) => {
     const [auth, setAuth] = useState(false);

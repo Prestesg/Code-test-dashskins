@@ -27,8 +27,12 @@ body {
   margin: 0;
   display: flex;
   place-items: center;
+  height: 100%;
+  width: 100%;
   min-width: 320px;
   min-height: 100vh;
+  background: rgb(38,74,143);
+background: linear-gradient(0deg, rgba(38,74,143,1) 0%, rgba(229,89,126,1) 43%, rgba(133,68,134,1) 82%);
 }
 
 h1 {
