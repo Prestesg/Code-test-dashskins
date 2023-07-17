@@ -3,22 +3,23 @@ import AuthContext from './AuthContext';
 import userFormValidation from '../utils/userFormValidation';
 import SnackbarContext from './SnackbarContext';
 
-
 export const UserContext = createContext({});
 
 export const UserContextProvider = ({ children }) => {
     const [users, setUsers] = useState([]);
     const { auth } = useContext(AuthContext);
     const { setSnackbar } = useContext(SnackbarContext);
-    
+
     const getUsers = () => {
-        fetch("/api/users",{
-            headers: { 'authorization': `Bearer ${auth}` },
-        })
+        fetch("/api/users")
         .then((res)=> res.json())
         .then((body)=> {
           setUsers(body.users)
         })
+    }
+
+    const logout = () => {
+        return fetch("/api/users/logout")
     }
  
     const deleteUser = (user:any) => {
@@ -76,7 +77,7 @@ export const UserContextProvider = ({ children }) => {
     }
 
     return (
-        <UserContext.Provider value={{ users,setUsers,getUsers,deleteUser,insertUser,saveChanges }}>
+        <UserContext.Provider value={{ users,setUsers,getUsers,deleteUser,insertUser,saveChanges,logout }}>
             {children}
         </UserContext.Provider>
     );

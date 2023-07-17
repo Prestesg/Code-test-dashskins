@@ -8,7 +8,6 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.enableCors();
   app.setGlobalPrefix("/api");
-  app.useStaticAssets(path.join(__dirname,"/uploads/files"))
   app.use(cookieParser());
   await app.listen(3000);
 }

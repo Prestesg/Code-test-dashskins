@@ -18,7 +18,6 @@ export const AuthContextProvider = ({ children }) => {
             body: JSON.stringify(loginForm)}
         )
         .then((res) =>{
-            console.log({res})
             if(res.status !== 200){
                 throw new Error("Usuário ou senha inválidos");
             } else {

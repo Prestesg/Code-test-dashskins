@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpStatus, HttpException, Post, UseInterceptors, Put, Req, Res,UploadedFile } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpStatus, HttpException, Post, UseInterceptors, Put, Req, Res,UploadedFile, Param } from "@nestjs/common";
 import { User } from "../model/user.schema";
 import { UserService } from "../service/user.service";
 import { JwtService } from '@nestjs/jwt'
@@ -6,6 +6,7 @@ import { diskStorage } from "multer";
 import { randomUUID } from 'crypto';
 import Path = require('path');
 import { FileInterceptor} from '@nestjs/platform-express';
+import { join } from "path";
 
 const storage = {
     storage : diskStorage({
@@ -58,6 +59,14 @@ export class UserController {
         }else {
             return new HttpException('Usuário não encontrado', HttpStatus.BAD_REQUEST)
         }
+    }
+    @Get('logout')
+    async logout(@Res() res) {
+        return res.clearCookie("api-token").json();
+    }
+    @Get('avatar-image/:image')
+    async findAvatarImage(@Param("image") image, @Res() res) {
+        return res.sendFile(join(process.cwd(),'src/uploads/files/' + image))
     }
     @Post('/signup')
     async Signup(@Res() response, @Body() user: User) {

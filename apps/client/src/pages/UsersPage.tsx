@@ -8,8 +8,8 @@ import { useNavigate } from "react-router-dom";
 import Button from '@mui/material/Button';
 
 function UsersPage() {
-  const { auth } = useContext(AuthContext);
-  const { getUsers } = useContext(UserContext);
+  const { auth, setAuth } = useContext(AuthContext);
+  const { getUsers, logout } = useContext(UserContext);
   const navigate = useNavigate();
   
   useEffect(() => {
@@ -22,7 +22,7 @@ function UsersPage() {
 
   return (
     <>    
-      <Button onClick={()=>true}>LOGOUT</Button>
+      <Button onClick={()=>logout().then(()=>{navigate("/");setAuth(false)})}>LOGOUT</Button>
       <EditionModal user={{name:"",email:"",age:0}} method={"insert"}/>
       <UsersTable />
     </>
