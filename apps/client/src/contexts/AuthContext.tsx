@@ -1,19 +1,35 @@
-import { createContext, useState} from 'react'
+import { createContext, useState, useEffect, useContext} from 'react'
+import SnackbarContext from './SnackbarContext';
 
 export const AuthContext = createContext({});
 
 export const AuthContextProvider = ({ children }) => {
     const [auth, setAuth] = useState(false);
+    const { setSnackbar } = useContext(SnackbarContext);
+
+    useEffect(() => {
+        login({},true);
+    }, []);
     
-    const login = (loginForm) => {
+    const login = (loginForm,first) => {
         fetch("/api/users/signin",{
             method:"POST",
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(loginForm)}
-        ).then((res)=>res.json())
-        .then(body =>{
-            setAuth(body.token);
-        })
+        )
+        .then((res) =>{
+            console.log({res})
+            if(res.status !== 200){
+                throw new Error("Usuário ou senha inválidos");
+            } else {
+                setSnackbar({open:true,message:"Usuário logado com sucesso",type:"success"});
+                setAuth(true);
+            }
+        }).catch((err) => {
+            if(!first){
+                setSnackbar({open:true,message:err.toString(),type:"error"});
+            }
+        });
     }
  
     const singnup = (loginForm) => {
@@ -21,7 +37,7 @@ export const AuthContextProvider = ({ children }) => {
             method:"POST",
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(loginForm)}
-        ).then((res)=>setAuth(true));
+        ).then(()=>setAuth(true));
     }
 
     return (

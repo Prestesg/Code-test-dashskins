@@ -6,34 +6,34 @@ import { JwtService } from '@nestjs/jwt'
 @Controller('/users')
 export class UserController {
     constructor(
-        private readonly userServerice: UserService,
+        private readonly userService: UserService,
         private jwtService: JwtService
     ) { }
     
     @Get()
     async findAll(@Res() response) {
-        const users = await this.userServerice.getAll();
+        const users = await this.userService.getAll();
         return response.status(HttpStatus.OK).json({
             users
         })
     }
     @Post()
     async insertUser(@Res() response, @Body() user: User) {
-        const newUSer = await this.userServerice.insertUser(user);
+        const newUSer = await this.userService.insertUser(user);
         return response.status(HttpStatus.CREATED).json({
             newUSer
         })
     }
     @Delete()
     async deleteUser(@Res() response, @Body() user: User) {
-        const deletedUser = await this.userServerice.delete(user);
+        const deletedUser = await this.userService.delete(user);
         return response.status(HttpStatus.OK).json({
             deletedUser
         })
     }
     @Put()
     async updateUser(@Res() response, @Body() user: User) {
-        const updatedUser = await this.userServerice.updateUser(user);
+        const updatedUser = await this.userService.updateUser(user);
         if(updatedUser.acknowledged){
             return response.status(HttpStatus.OK)           
         }else {
@@ -42,14 +42,31 @@ export class UserController {
     }
     @Post('/signup')
     async Signup(@Res() response, @Body() user: User) {
-        const newUSer = await this.userServerice.signup(user);
+        const newUSer = await this.userService.signup(user);
         return response.status(HttpStatus.CREATED).json({
             newUSer
-        })
+        });
     }
     @Post('/signin')
-    async SignIn(@Res() response, @Body() user: User) {
-        const token = await this.userServerice.signin(user, this.jwtService);
-        return response.status(HttpStatus.OK).json(token)
+    async SignIn(@Req() request, @Res() response, @Body() user: User) {
+        console.log(request?.cookies?.['api-token'])
+        if(request?.cookies?.['api-token']) {
+            const token = request.cookies['api-token'];
+            const decoded = this.jwtService.verify(token);
+            const user = await this.userService.getOne(decoded._id)
+            if(user) {
+                return response.status(HttpStatus.OK).json();    
+            } else {
+                return new HttpException('Usuário não encontrado', HttpStatus.UNAUTHORIZED)
+            }
+        } else {
+            const signinRes = await this.userService.signin(user, this.jwtService);
+            if(signinRes.token){
+                console.log(signinRes.token)
+                return response.cookie('api-token', signinRes.token, { httpOnly: true }).status(HttpStatus.OK).json();
+            } else {
+                return response.status(HttpStatus.UNAUTHORIZED).json();
+            }
+        }
     }
 }

@@ -1,10 +1,11 @@
-import { useState,useEffect, useContext } from 'react';
+import { useEffect, useContext } from 'react';
 import '../App.css'
 import UsersTable from '../components/UsersTable';
 import EditionModal  from '../components/EditionModal';
 import UserContext from '../contexts/UserContext';
 import AuthContext from '../contexts/AuthContext';
 import { useNavigate } from "react-router-dom";
+import Button from '@mui/material/Button';
 
 function UsersPage() {
   const { auth } = useContext(AuthContext);
@@ -12,7 +13,6 @@ function UsersPage() {
   const navigate = useNavigate();
   
   useEffect(() => {
-    console.log({auth});
     if(auth){
       getUsers();
     } else{ 
@@ -22,6 +22,7 @@ function UsersPage() {
 
   return (
     <>    
+      <Button onClick={()=>true}>LOGOUT</Button>
       <EditionModal user={{name:"",email:"",age:0}} method={"insert"}/>
       <UsersTable />
     </>

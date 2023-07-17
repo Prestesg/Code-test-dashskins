@@ -4,7 +4,6 @@ import Modal from '@mui/material/Modal';
 import TextField from '@mui/material/TextField';
 import { useState,useContext } from 'react';
 import UserContext from '../contexts/UserContext';
-import AuthContext from '../contexts/AuthContext';
 
 const style = {
   position: 'absolute' as 'absolute',

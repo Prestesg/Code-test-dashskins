@@ -1,22 +1,15 @@
-import { createContext, useState, useContext,forwardRef } from 'react'
+import { createContext, useState, useContext } from 'react'
 import AuthContext from './AuthContext';
 import userFormValidation from '../utils/userFormValidation';
-import Snackbar from '@mui/material/Snackbar';
-import MuiAlert, { AlertProps } from '@mui/material/Alert';
+import SnackbarContext from './SnackbarContext';
 
-const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(
-    props,
-    ref,
-  ) {
-    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-});
 
 export const UserContext = createContext({});
 
 export const UserContextProvider = ({ children }) => {
-    const [snackbar, setSnackbar] = useState({open:false,message:"",type:"success"});
     const [users, setUsers] = useState([]);
     const { auth } = useContext(AuthContext);
+    const { setSnackbar } = useContext(SnackbarContext);
     
     const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
         if (reason === 'clickaway') {
@@ -87,11 +80,6 @@ export const UserContextProvider = ({ children }) => {
 
     return (
         <UserContext.Provider value={{ users,setUsers,getUsers,deleteUser,insertUser,saveChanges }}>
-            <Snackbar open={snackbar.open} autoHideDuration={6000} onClose={handleClose} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
-                <Alert onClose={handleClose} severity={snackbar.type} sx={{ width: '100%' }}>
-                    {snackbar.message}
-                </Alert>
-            </Snackbar>
             {children}
         </UserContext.Provider>
     );
