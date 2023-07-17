@@ -13,6 +13,7 @@ Instruções de instalação
 1. npm install
 2. npm install -g vite
 3. npm install -g @nestjs/cli
+4. npm install -g dotenv
 
 Rodando o projeto 
 1. npm run dev
@@ -30,6 +31,6 @@ Requisitos implementados:
 - [x] Uso de cookies em autenticações
 - [x] Upload de imagens de avatar
 - [x] Gerenciamentos de estados com ContextAPI
-- [ ] Front bonito
-- [ ] Testes automatizados
+- [ ] Front bonito e responsivo
+- [ ] Testes unitários
 - [ ] Animações na tabela de usuário
