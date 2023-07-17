@@ -8,6 +8,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
+import Avatar from '@mui/material/Avatar';
 
 import EditionModal  from './EditionModal';
 import { useContext } from 'react';
@@ -36,7 +37,7 @@ const UsersTable = () => {
                 <TableCell component="th" scope="row">{user.name}</TableCell>
                 <TableCell >{user.age}</TableCell>
                 <TableCell >{user.email}</TableCell>
-                <TableCell >{user.avatar}</TableCell>
+                <TableCell ><Avatar alt={user.name} src={`http://localhost:3000/${user.avatar}`} /></TableCell>
                 <TableCell >
                     <EditionModal user={user} key={index} method={"update"}/>
                     <IconButton aria-label="delete" onClick={()=> deleteUser(user)}>

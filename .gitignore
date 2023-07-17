@@ -2,6 +2,7 @@
 /dist
 /node_modules
 /apps/api/dist
+/apps/api/src/uploads/*
 /apps/client/dist
 
 # Logs

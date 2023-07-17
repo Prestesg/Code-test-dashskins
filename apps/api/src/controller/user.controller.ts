@@ -1,8 +1,22 @@
-import { Body, Controller, Delete, Get, HttpStatus, HttpException, Post, UploadedFiles, Put, Req, Res } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpStatus, HttpException, Post, UseInterceptors, Put, Req, Res,UploadedFile } from "@nestjs/common";
 import { User } from "../model/user.schema";
 import { UserService } from "../service/user.service";
 import { JwtService } from '@nestjs/jwt'
+import { diskStorage } from "multer";
+import { randomUUID } from 'crypto';
+import Path = require('path');
+import { FileInterceptor} from '@nestjs/platform-express';
 
+const storage = {
+    storage : diskStorage({
+        destination: 'src/uploads/files',
+        filename: (req, file, cb) =>{
+            const filename: string = 'myfile-' + randomUUID();
+            const extension: string = Path.parse(file.originalname).ext;
+            cb(null, `${filename}${extension}`)
+        }
+    })
+}
 @Controller('/users')
 export class UserController {
     constructor(
@@ -18,6 +32,7 @@ export class UserController {
         })
     }
     @Post()
+    @UseInterceptors(FileInterceptor('file', storage))
     async insertUser(@Res() response, @Body() user: User) {
         const newUSer = await this.userService.insertUser(user);
         return response.status(HttpStatus.CREATED).json({
@@ -32,7 +47,11 @@ export class UserController {
         })
     }
     @Put()
-    async updateUser(@Res() response, @Body() user: User) {
+    @UseInterceptors(FileInterceptor('avatar', storage))
+    async updateUser(@Res() response, @Body() user: User,@UploadedFile() file) {
+        if(file){
+            user.avatar = file.filename;
+        }
         const updatedUser = await this.userService.updateUser(user);
         if(updatedUser.acknowledged){
             return response.status(HttpStatus.OK)           
@@ -49,7 +68,6 @@ export class UserController {
     }
     @Post('/signin')
     async SignIn(@Req() request, @Res() response, @Body() user: User) {
-        console.log(request?.cookies?.['api-token'])
         if(request?.cookies?.['api-token']) {
             const token = request.cookies['api-token'];
             const decoded = this.jwtService.verify(token);
@@ -62,7 +80,6 @@ export class UserController {
         } else {
             const signinRes = await this.userService.signin(user, this.jwtService);
             if(signinRes.token){
-                console.log(signinRes.token)
                 return response.cookie('api-token', signinRes.token, { httpOnly: true }).status(HttpStatus.OK).json();
             } else {
                 return response.status(HttpStatus.UNAUTHORIZED).json();

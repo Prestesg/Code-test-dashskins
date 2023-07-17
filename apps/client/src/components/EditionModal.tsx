@@ -1,9 +1,11 @@
+import * as React from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Modal from '@mui/material/Modal';
 import TextField from '@mui/material/TextField';
 import { useState,useContext } from 'react';
 import UserContext from '../contexts/UserContext';
+import Avatar from '@mui/material/Avatar';
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -42,6 +44,23 @@ const EditionModal = ({user,method}) => {
         <Box sx={style}
         component="form"
         >
+          <Avatar alt={userEdit.avatar} src={userEdit?.avatar?.url?`${userEdit?.avatar?.url}`:userEdit?.avatar?`http://localhost:3000/${userEdit?.avatar}`:""} />
+          <Button
+            variant="contained"
+            component="label"
+          >
+            Upload File
+            <input
+              type="file"
+              accept="image/png, image/jpeg" 
+              hidden
+              onChange={(e)=>{
+                const { files } = e.target as HTMLInputElement;
+                files[0]["url"] = URL.createObjectURL(files[0]);
+                onUserChange('avatar',files[0])
+              }}
+            />
+          </Button>
         <TextField
           required
           label="Nome"

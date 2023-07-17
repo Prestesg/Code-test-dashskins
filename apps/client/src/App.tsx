@@ -1,3 +1,4 @@
+import * as React from 'react';
 import './App.css';
 import { UserContextProvider }  from './contexts/UserContext';
 import { AuthContextProvider } from './contexts/AuthContext';

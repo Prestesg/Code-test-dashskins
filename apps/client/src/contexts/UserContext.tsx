@@ -11,13 +11,6 @@ export const UserContextProvider = ({ children }) => {
     const { auth } = useContext(AuthContext);
     const { setSnackbar } = useContext(SnackbarContext);
     
-    const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
-        if (reason === 'clickaway') {
-          return;
-        }
-        setSnackbar({open:false,message:"",type:"success"});
-    };
-    
     const getUsers = () => {
         fetch("/api/users",{
             headers: { 'authorization': `Bearer ${auth}` },
@@ -60,12 +53,16 @@ export const UserContextProvider = ({ children }) => {
     }
 
     const saveChanges = (userForm,errorHandler) => {
+        const formData = new FormData();
+        Object.keys(userForm).forEach((key)=>{
+            formData.append(key,userForm[key])
+        })
         if(!userFormValidation(userForm,errorHandler)){
             fetch("/api/users",{
                 method:"PUT",
-                headers: { 'Content-Type': 'application/json',
+                headers: {
                 'authorization': `Bearer ${auth}`  },
-                body: JSON.stringify(userForm)
+                body: formData
             }
             ).then(()=>{
                 setSnackbar({open:true,message:"Usuário atualizado com sucesso",type:"success"});
