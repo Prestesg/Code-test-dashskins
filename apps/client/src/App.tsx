@@ -1,6 +1,7 @@
 import './App.css';
 import { UserContextProvider }  from './contexts/UserContext';
 import { AuthContextProvider } from './contexts/AuthContext';
+import { SnackbarContextProvider } from './contexts/SnackbarContext';
 
 import {
   createBrowserRouter,
@@ -24,11 +25,13 @@ const router = createBrowserRouter([
 function App() {
   return (
     <>
-    <AuthContextProvider>
-      <UserContextProvider >
-        <RouterProvider router={router} />
-      </UserContextProvider>
-    </AuthContextProvider>
+    <SnackbarContextProvider>
+      <AuthContextProvider>
+        <UserContextProvider >
+          <RouterProvider router={router} />
+        </UserContextProvider>
+      </AuthContextProvider>
+    </SnackbarContextProvider>
     </>
   )
 }
