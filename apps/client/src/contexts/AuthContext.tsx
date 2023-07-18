@@ -41,7 +41,7 @@ export const AuthContextProvider = ({ children }) => {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(loginForm)}
         ).then((res)=>{
-            if(res.status !== 200){
+            if(![200,201].includes(res.status)){
                 throw new Error("Usuário já cadastrado");
             } else {
                 setSnackbar({open:true,message:"Usuário cadastrado com sucesso",type:"success"});

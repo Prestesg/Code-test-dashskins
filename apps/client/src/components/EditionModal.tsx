@@ -37,7 +37,7 @@ const EditionModal = ({user,method}:any) => {
   
   return (
     <div>
-      <Button onClick={handleOpen}>{method === "insert"?"INSERIR":"EDIT"}</Button>
+      <Button variant="contained" onClick={handleOpen}>{method === "insert"?"INSERIR":"EDIT"}</Button>
       <Modal
         open={open}
         onClose={handleClose}

@@ -22,7 +22,7 @@ function UsersPage() {
 
   return (
     <>    
-      <Button onClick={()=>logout().then(()=>{navigate("/");setAuth(false)})}>LOGOUT</Button>
+      <Button variant={"contained"} onClick={()=>logout().then(()=>{navigate("/");setAuth(false)})}>LOGOUT</Button>
       <EditionModal user={{name:"",email:"",age:0}} method={"insert"}/>
       <UsersTable />
     </>

@@ -9,7 +9,7 @@ import Paper from '@mui/material/Paper';
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Avatar from '@mui/material/Avatar';
-
+import Container from '@mui/material/Container';
 import EditionModal  from './EditionModal';
 import { useContext } from 'react';
 import UserContext from '../contexts/UserContext';
@@ -20,6 +20,7 @@ const UsersTable = () => {
         
     return (
       <>
+      <Container fixed>
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 1000 }} aria-label="simple table">
           <TableHead>
@@ -38,7 +39,7 @@ const UsersTable = () => {
                 <TableCell >{user.age}</TableCell>
                 <TableCell >{user.email}</TableCell>
                 <TableCell ><Avatar alt={user.name} src={user.avatar?`http://localhost:3000/api/users/avatar-image/${user.avatar}`:""} /></TableCell>
-                <TableCell >
+                <TableCell sx={{display:"flex"}}>
                     <EditionModal user={user} key={index} method={"update"}/>
                     <IconButton aria-label="delete" onClick={()=> deleteUser(user)}>
                         <DeleteIcon />
@@ -49,6 +50,7 @@ const UsersTable = () => {
           </TableBody>
         </Table>
       </TableContainer>
+      </Container>
       </>
     )
 }
