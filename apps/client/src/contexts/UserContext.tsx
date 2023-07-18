@@ -3,7 +3,10 @@ import AuthContext from './AuthContext';
 import userFormValidation from '../utils/userFormValidation';
 import SnackbarContext from './SnackbarContext';
 
-export const UserContext = createContext({});
+export const UserContext = createContext({
+    saveChanges:(_user:any,_errorHandler:Function)=>true,
+    insertUser :(_user:any,_errorHandler:Function)=>true
+});
 
 export const UserContextProvider = ({ children }) => {
     const [users, setUsers] = useState([]);
@@ -36,12 +39,15 @@ export const UserContextProvider = ({ children }) => {
     }
 
     const insertUser = (userForm,errorHandler) => {
+        const formData = new FormData();
+        Object.keys(userForm).forEach((key)=>{
+            formData.append(key,userForm[key])
+        })
         if(!userFormValidation(userForm,errorHandler)){
             fetch("/api/users",{
                 method:"POST",
-                headers: { 'Content-Type': 'application/json',
-                'authorization': `Bearer ${auth}`  },
-                body: JSON.stringify(userForm)}
+                body: formData
+            }
             ).then(()=>{
                 setSnackbar({open:true,message:"Usuário registrado com sucesso",type:"success"});
                 getUsers()
@@ -61,8 +67,6 @@ export const UserContextProvider = ({ children }) => {
         if(!userFormValidation(userForm,errorHandler)){
             fetch("/api/users",{
                 method:"PUT",
-                headers: {
-                'authorization': `Bearer ${auth}`  },
                 body: formData
             }
             ).then(()=>{

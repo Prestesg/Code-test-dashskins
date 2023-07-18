@@ -33,8 +33,12 @@ export class UserController {
         })
     }
     @Post()
-    @UseInterceptors(FileInterceptor('file', storage))
-    async insertUser(@Res() response, @Body() user: User) {
+    @UseInterceptors(FileInterceptor('avatar', storage))
+    async insertUser(@Res() response, @Body() user: User,@UploadedFile() file) {
+        console.log(user)
+        if(file){
+            user.avatar = file.filename;
+        }
         const newUSer = await this.userService.insertUser(user);
         return response.status(HttpStatus.CREATED).json({
             newUSer
@@ -55,7 +59,7 @@ export class UserController {
         }
         const updatedUser = await this.userService.updateUser(user);
         if(updatedUser.acknowledged){
-            return response.status(HttpStatus.OK)           
+            return response.status(HttpStatus.OK).json();           
         }else {
             return new HttpException('Usuário não encontrado', HttpStatus.BAD_REQUEST)
         }
