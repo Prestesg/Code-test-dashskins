@@ -15,7 +15,7 @@ export class User {
     avatar: string;
     @Prop()
     steamId: string
-    @Prop({select: false })
+    @Prop()
     password: string
 }
 

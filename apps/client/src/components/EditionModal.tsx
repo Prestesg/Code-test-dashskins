@@ -19,10 +19,11 @@ const style = {
   p: 4,
 };
 
-const EditionModal = ({user,method}) => {
+const EditionModal = ({user,method}:any) => {
   const [open, setOpen] = useState(false);
   const [userEdit, setUserEdit] = useState(user);
-  const [formErrors, setFormErrors] = useState(user);
+  const [formErrors, setFormErrors] = useState({});
+
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const { saveChanges, insertUser } = useContext(UserContext);
@@ -44,30 +45,37 @@ const EditionModal = ({user,method}) => {
         <Box sx={style}
         component="form"
         >
-          <Avatar alt={userEdit.avatar} src={userEdit?.avatar?.url?`${userEdit?.avatar?.url}`:userEdit?.avatar?`http://localhost:3000/${userEdit?.avatar}`:""} />
+          <div style={{textAlign:"center"}}>
+          <Avatar 
+            sx={{ width: 100, height: 100 ,margin:"auto",marginBottom:"15px"}}
+            alt={userEdit.avatar} 
+            src={userEdit?.avatar?.url?`${userEdit?.avatar?.url}`:userEdit?.avatar?`http://localhost:3000/${userEdit?.avatar}`:""} 
+          />
           <Button
             variant="contained"
             component="label"
+            color="secondary"
           >
-            Upload File
+            Carregar Imagem
             <input
               type="file"
               accept="image/png, image/jpeg" 
               hidden
               onChange={(e)=>{
-                const { files } = e.target as HTMLInputElement;
+                const { files }:any = e.target as HTMLInputElement;
                 files[0]["url"] = URL.createObjectURL(files[0]);
                 onUserChange('avatar',files[0])
               }}
             />
           </Button>
+          </div>
         <TextField
           required
           label="Nome"
           value={userEdit.name}
           onChange={(e)=>onUserChange('name',e.target.value)}
-          error={!formErrors.name}
-          helperText={!formErrors.name?"Você precisa inserir um nome":""}
+          error={formErrors.name}
+          helperText={formErrors.name?"Você precisa inserir um nome":""}
           margin="normal"
         />
         <TextField
@@ -76,8 +84,8 @@ const EditionModal = ({user,method}) => {
           type="number"
           value={userEdit.age}
           onChange={(e)=>onUserChange('age',e.target.value)}
-          error={!formErrors.age}
-          helperText={!formErrors.age?"Você precisa inserir uma idade válida":""}
+          error={formErrors.age}
+          helperText={formErrors.age?"Você precisa inserir uma idade válida":""}
           margin="normal"
         />
         <TextField
@@ -85,11 +93,17 @@ const EditionModal = ({user,method}) => {
           label="Email"
           value={userEdit.email}
           onChange={(e)=>onUserChange('email',e.target.value)}
-          error={!formErrors.email}
-          helperText={!formErrors.email?"Você precisa inserir um email válido":""}
+          error={formErrors.email}
+          helperText={formErrors.email?"Você precisa inserir um email válido":""}
           margin="normal"
         />
-        <Button onClick={method === "insert"?()=>insertUser(userEdit,setFormErrors):()=>saveChanges(userEdit,setFormErrors)}>{method === "insert"?"INSERIR":"SALVAR"}</Button>
+        <div>
+          <Button 
+          variant="contained"
+            onClick={method === "insert"?()=>insertUser(userEdit,setFormErrors):()=>saveChanges(userEdit,setFormErrors)}>
+              {method === "insert"?"INSERIR":"SALVAR"}
+          </Button>
+        </div>
         </Box>
       </Modal>
     </div>

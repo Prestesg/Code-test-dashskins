@@ -40,9 +40,15 @@ export const AuthContextProvider = ({ children }) => {
             method:"POST",
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(loginForm)}
-        ).then(()=>{
-            setSnackbar({open:true,message:"Usuário cadastrado com sucesso",type:"success"});
-            setAuth(true)
+        ).then((res)=>{
+            if(res.status !== 200){
+                throw new Error("Usuário já cadastrado");
+            } else {
+                setSnackbar({open:true,message:"Usuário cadastrado com sucesso",type:"success"});
+                setAuth(true)
+            }
+        }).catch((err) => {
+            setSnackbar({open:true,message:err.toString(),type:"error"}); 
         });
     }
 

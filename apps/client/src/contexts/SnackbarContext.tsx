@@ -18,7 +18,7 @@ export const SnackbarContextProvider = ({ children }) => {
         if (reason === 'clickaway') {
           return;
         }
-        setSnackbar({open:false,message:"",type:"success"});
+        setSnackbar((state)=>{return{...state,open:false}});
     };
 
 

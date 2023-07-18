@@ -46,15 +46,15 @@ export class UserService {
         const foundUser = await this.userModel.findOne({ name: user.name }).exec();
         if (foundUser) {
             const { password } = foundUser;
-            if (bcrypt.compare(user.password, password)) {
+            if (await bcrypt.compare(user.password, password)) {
                 const payload = { name: user.name,_id:foundUser._id };
                 return {
                     token: jwt.sign(payload),
                 };
             }
-            return new HttpException('Incorrect username or password', HttpStatus.UNAUTHORIZED)
+            throw new HttpException('Incorrect username or password', HttpStatus.UNAUTHORIZED)
         }
-        return new HttpException('Incorrect username or password', HttpStatus.UNAUTHORIZED)
+        throw new HttpException('Incorrect username or password', HttpStatus.UNAUTHORIZED)
     }
     async delete(user: User): Promise<User> {
         return await this.userModel.findByIdAndRemove(user._id).exec();
