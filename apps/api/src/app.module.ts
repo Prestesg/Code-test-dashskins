@@ -1,6 +1,6 @@
 import { Module, RequestMethod, MiddlewareConsumer } from '@nestjs/common';
 import { AppController } from './app.controller';
-import { UserController } from './controller/user.controller'
+import { UserController } from './controller/user.controller';
 import { AppService } from './app.service';
 import { UserService } from './service/user.service';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -17,19 +17,16 @@ import { isAuthenticated } from './app.middleware';
     MongooseModule.forRoot(process.env.DATABASE_CONNECTION),
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     JwtModule.register({
-      secret:process.env.JWT_SECRET,
+      secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '2h' },
     }),
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '../..','client', 'dist'),
+      rootPath: join(__dirname, '../..', 'client', 'dist'),
     }),
   ],
-  controllers: [
-    UserController,
-    AppController],
-  providers: [UserService,AppService],
+  controllers: [UserController, AppController],
+  providers: [UserService, AppService],
 })
-
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
