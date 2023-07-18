@@ -8,6 +8,7 @@ import { JwtService } from '@nestjs/jwt';
 @Injectable()
 export class UserService {
     constructor(@InjectModel(User.name) private userModel: Model<UserDocument>,
+    private jwtService: JwtService
     ) { }
     async getAll(): Promise<User[]> {
         return await this.userModel.find().exec();
@@ -30,7 +31,7 @@ export class UserService {
         return updatedUser;
     }
 
-    async signup(user: User, jwt: JwtService): Promise<any> {
+    async signup(user: User): Promise<any> {
         const salt = await bcrypt.genSalt();
         const hash = await bcrypt.hash(user.password, salt);
         const reqBody = {
@@ -40,16 +41,16 @@ export class UserService {
         const newUser = new this.userModel(reqBody);
         const userRes = await newUser.save()
         const payload = { name: user.name,_id:userRes._id };
-        return {token: jwt.sign(payload)};
+        return {token: this.jwtService.sign(payload)};
     }   
-    async signin(user: User, jwt: JwtService): Promise<any> {
+    async signin(user: User): Promise<any> {
         const foundUser = await this.userModel.findOne({ name: user.name }).exec();
         if (foundUser) {
             const { password } = foundUser;
             if (await bcrypt.compare(user.password, password)) {
                 const payload = { name: user.name,_id:foundUser._id };
                 return {
-                    token: jwt.sign(payload),
+                    token: this.jwtService.sign(payload),
                 };
             }
             throw new HttpException('Incorrect username or password', HttpStatus.UNAUTHORIZED)
@@ -61,5 +62,8 @@ export class UserService {
     }
     async getOne(_id): Promise<User> {
         return await this.userModel.findOne({ _id }).exec();
+    }
+    async verifyToken(token): Promise<User> {
+        return this.jwtService.verify(token);;
     }
 }

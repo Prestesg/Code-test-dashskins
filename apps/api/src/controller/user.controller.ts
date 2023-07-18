@@ -21,8 +21,7 @@ const storage = {
 @Controller('/users')
 export class UserController {
     constructor(
-        private readonly userService: UserService,
-        private jwtService: JwtService
+        private readonly userService: UserService
     ) { }
     
     @Get()
@@ -96,9 +95,9 @@ export class UserController {
         }
     }
     @Post('/signup')
-    async Signup(@Res() response, @Body() user: User) {
+    async signUp(@Res() response, @Body() user: User) {
         try {
-            const newUSer = await this.userService.signup(user,this.jwtService);
+            const newUSer = await this.userService.signup(user);
             if(newUSer?.token){
                 return response.cookie('api-token', newUSer?.token, { httpOnly: true }).status(HttpStatus.CREATED).json();
             }else {
@@ -109,11 +108,11 @@ export class UserController {
         }
     }
     @Post('/signin')
-    async SignIn(@Req() request, @Res() response, @Body() user: User) {
+    async signIn(@Req() request, @Res() response, @Body() user: User) {
         try {
             if(request?.cookies?.['api-token']) {
                 const token = request.cookies['api-token'];
-                const decoded = this.jwtService.verify(token);
+                const decoded = await this.userService.verifyToken(token);
                 const user = await this.userService.getOne(decoded._id)
                 if(user) {
                     return response.status(HttpStatus.OK).json();    
@@ -121,7 +120,7 @@ export class UserController {
                     throw new HttpException('Usuário não encontrado', HttpStatus.UNAUTHORIZED)
                 }
             } else {
-                const signinRes = await this.userService.signin(user, this.jwtService);
+                const signinRes = await this.userService.signin(user);
                 if(signinRes.token){
                     return response.cookie('api-token', signinRes.token, { httpOnly: true }).status(HttpStatus.OK).json();
                 } else {
