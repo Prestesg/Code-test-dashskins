@@ -30,19 +30,17 @@ export class UserService {
         return updatedUser;
     }
 
-    async signup(user: User): Promise<User> {
+    async signup(user: User, jwt: JwtService): Promise<any> {
         const salt = await bcrypt.genSalt();
         const hash = await bcrypt.hash(user.password, salt);
         const reqBody = {
             name: user.name,
-            age: user?.age,
-            avatar: user?.avatar,
-            steamId: user?.steamId,
-            email: user?.email,
             password: hash
         }
         const newUser = new this.userModel(reqBody);
-        return newUser.save();
+        const userRes = await newUser.save()
+        const payload = { name: user.name,_id:userRes._id };
+        return {token: jwt.sign(payload)};
     }   
     async signin(user: User, jwt: JwtService): Promise<any> {
         const foundUser = await this.userModel.findOne({ name: user.name }).exec();

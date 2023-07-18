@@ -9,7 +9,7 @@ export class User {
     name: string;
     @Prop()
     age: number;
-    @Prop({unique:true, lowercase:true})
+    @Prop({lowercase:true})
     email: string;
     @Prop()
     avatar: string;

@@ -70,10 +70,12 @@ export class UserController {
     }
     @Post('/signup')
     async Signup(@Res() response, @Body() user: User) {
-        const newUSer = await this.userService.signup(user);
-        return response.status(HttpStatus.CREATED).json({
-            newUSer
-        });
+        const newUSer = await this.userService.signup(user,this.jwtService);
+        if(newUSer?.token){
+            return response.cookie('api-token', newUSer?.token, { httpOnly: true }).status(HttpStatus.CREATED).json();
+        }else {
+            return new HttpException('Usuário não encontrado', HttpStatus.UNAUTHORIZED)
+        }
     }
     @Post('/signin')
     async SignIn(@Req() request, @Res() response, @Body() user: User) {

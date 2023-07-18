@@ -37,7 +37,7 @@ const UsersTable = () => {
                 <TableCell component="th" scope="row">{user.name}</TableCell>
                 <TableCell >{user.age}</TableCell>
                 <TableCell >{user.email}</TableCell>
-                <TableCell ><Avatar alt={user.name} src={`http://localhost:3000/api/users/avatar-image/${user.avatar}`} /></TableCell>
+                <TableCell ><Avatar alt={user.name} src={user.avatar?`http://localhost:3000/api/users/avatar-image/${user.avatar}`:""} /></TableCell>
                 <TableCell >
                     <EditionModal user={user} key={index} method={"update"}/>
                     <IconButton aria-label="delete" onClick={()=> deleteUser(user)}>
